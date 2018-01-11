@@ -1,2 +1,2 @@
-# microsoft-logging
+# Microsoft.Extensions.Logging
 Unity.Microsoft.Logging package
