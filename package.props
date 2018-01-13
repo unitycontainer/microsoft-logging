@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <Version>2.0.0</Version>
-    <PackageReleaseNotes>This package is an Unity adapter to Microsoft.Extensions.Logging.2+ and distributed as .NET Standard 2.0, .NET 4.5, 4.7</PackageReleaseNotes>
+    <PackageReleaseNotes>This package is an Unity adapter to Microsoft.Extensions.Logging.2+ and distributed as .NET Standard 2.0, .NET 4.6.1, 4.7</PackageReleaseNotes>
   </PropertyGroup>
 
   <PropertyGroup>
