@@ -9,11 +9,15 @@ using Unity.Policy;
 
 namespace Unity.Microsoft.Logging
 {
-    public class LoggingExtension : UnityContainerExtension, IBuildPlanCreatorPolicy
+    public class LoggingExtension : UnityContainerExtension,
+                                    IBuildPlanCreatorPolicy,
+                                    IBuildPlanPolicy
     {
         #region Fields
 
-        private readonly MethodInfo _createLoggerMethod;
+        private const string _errorType = "Type of the ILogger<T> is unknown, specify correct type";
+        private readonly MethodInfo _createLoggerMethod = typeof(LoggingExtension).GetTypeInfo()
+                                                                                  .GetDeclaredMethod(nameof(CreateLogger));
 
         #endregion
 
@@ -29,8 +33,6 @@ namespace Unity.Microsoft.Logging
         public LoggingExtension(ILoggerFactory loggerFactory)
         {
             LoggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
-            _createLoggerMethod = LoggerFactory.GetType().GetTypeInfo().GetDeclaredMethods(nameof(ILoggerFactory.CreateLogger))
-                                               .First(m => m.IsGenericMethod);
         }
 
 
@@ -44,44 +46,69 @@ namespace Unity.Microsoft.Logging
         #endregion
 
 
-        #region Implementation
+        #region IBuildPlanPolicy
 
-        protected override void Initialize()
+
+        public void BuildUp(IBuilderContext context)
         {
-            Context.Policies.Set<IBuildPlanCreatorPolicy>(this, typeof(ILogger<>));
-        }
-
-        IBuildPlanPolicy IBuildPlanCreatorPolicy.CreatePlan(IBuilderContext context, INamedType buildKey)
-        {
-            var itemType = (context ?? throw new ArgumentNullException(nameof(context))).BuildKey
-                                                                                        .Type
-                                                                                        .GetTypeInfo()
-                                                                                        .GenericTypeArguments
-                                                                                        .First();
-            var buildMethod = _createLoggerMethod.MakeGenericMethod(itemType)
-                                                 .CreateDelegate(typeof(DynamicBuildPlanMethod));
-
-            return new DynamicMethodBuildPlan((DynamicBuildPlanMethod)buildMethod);
+            context.Existing = null == context.ParentContext
+                             ? LoggerFactory.CreateLogger(context.OriginalBuildKey.Name ?? string.Empty)
+                             : LoggerFactory.CreateLogger(context.ParentContext.BuildKey.Type);
+            context.BuildComplete = true;
         }
 
         #endregion
 
 
-        #region Nested Types
+        #region IBuildPlanCreatorPolicy
 
-        public delegate void DynamicBuildPlanMethod(IBuilderContext context);
+        IBuildPlanPolicy IBuildPlanCreatorPolicy.CreatePlan(IBuilderContext context, INamedType buildKey)
+        {
+            var info = (context ?? throw new ArgumentNullException(nameof(context))).BuildKey
+                                                                                    .Type
+                                                                                    .GetTypeInfo();
+            if (!info.IsGenericType) return this;
+
+            var buildMethod = _createLoggerMethod.MakeGenericMethod(info.GenericTypeArguments.First())
+                                                 .CreateDelegate(typeof(DynamicBuildPlanMethod));
+
+            return new DynamicMethodBuildPlan((DynamicBuildPlanMethod)buildMethod, LoggerFactory);
+        }
+
+        #endregion
+
+
+        #region Implementation
+
+        private static void CreateLogger<T>(IBuilderContext context, ILoggerFactory loggerFactory)
+        {
+            context.Existing = loggerFactory.CreateLogger<T>();
+            context.BuildComplete = true;
+        }
+
+        protected override void Initialize()
+        {
+            Context.Policies.Set(typeof(ILogger), null, typeof(IBuildPlanPolicy), this);
+            Context.Policies.Set<IBuildPlanCreatorPolicy>(this, typeof(ILogger));
+            Context.Policies.Set<IBuildPlanCreatorPolicy>(this, typeof(ILogger<>));
+        }
+
+        private delegate void DynamicBuildPlanMethod(IBuilderContext context, ILoggerFactory loggerFactory);
 
         private class DynamicMethodBuildPlan : IBuildPlanPolicy
         {
             private readonly DynamicBuildPlanMethod _buildMethod;
+            private readonly ILoggerFactory _loggerFactory;
 
             /// <summary>
             /// 
             /// </summary>
             /// <param name="buildMethod"></param>
-            public DynamicMethodBuildPlan(DynamicBuildPlanMethod buildMethod)
+            public DynamicMethodBuildPlan(DynamicBuildPlanMethod buildMethod, 
+                                          ILoggerFactory loggerFactory)
             {
                 _buildMethod = buildMethod;
+                _loggerFactory = loggerFactory;
             }
 
             /// <summary>
@@ -90,10 +117,10 @@ namespace Unity.Microsoft.Logging
             /// <param name="context"></param>
             public void BuildUp(IBuilderContext context)
             {
-                _buildMethod(context);
+                _buildMethod(context, _loggerFactory);
             }
         }
-        
+
         #endregion
     }
 }
