@@ -11,7 +11,6 @@ namespace Microsoft.Logging.Tests
     public class LoggingFixture
     {
         private static IUnityContainer _container;
-        private LoggedType _instance;
 
         [ClassInitialize]
         public static void Setup(TestContext context)
