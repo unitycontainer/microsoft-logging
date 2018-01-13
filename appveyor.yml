@@ -17,7 +17,7 @@ build:
   parallel: true
   verbosity: minimal
 
-test_script:
+#test_script:
 #- cmd: dotnet test #--framework net47 --verbosity q
 
 artifacts:
