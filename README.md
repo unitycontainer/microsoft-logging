@@ -6,7 +6,7 @@
 
 
 # Microsoft.Extensions.Logging
-Unity extension to integrate with Microsoft.Extensions.Logging.
+Unity extension to integrate with [Microsoft.Extensions.Logging](https://www.nuget.org/packages?q=Microsoft.Extensions.Logging).
 
 ## Getting Started
 - Reference the [Unity.Microsoft.Logging](https://www.nuget.org/packages/Unity.Microsoft.Logging) package from NuGet.
