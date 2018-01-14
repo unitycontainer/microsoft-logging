@@ -6,6 +6,32 @@
 
 
 # Microsoft.Extensions.Logging
-Unity.Microsoft.Logging package
+Unity extension to integrate with Microsoft.Extensions.Logging.
+
+## Getting Started
+- Reference the `Unity.Microsoft.Logging` package from NuGet.
+```
+Install-Package Unity.Microsoft.Logging 
+```
+
+## Registration:
+- Add `LoggingExtension` extension to the container
+
+```C#
+container = new UnityContainer();
+container.AddNewExtension<LoggingExtension>()
+```
+- Where required add `ILogger` or  `ILogger<T>` interface to resolved constructor. 
+
+```C#
+public class LoggedType
+{
+    public LoggedType(ILogger<LoggedType> log)
+    {
+    }
+  ...
+}
+```
+- Log normally...
 
 
