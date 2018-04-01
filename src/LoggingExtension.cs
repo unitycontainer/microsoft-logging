@@ -15,7 +15,6 @@ namespace Unity.Microsoft.Logging
     {
         #region Fields
 
-        private const string _errorType = "Type of the ILogger<T> is unknown, specify correct type";
         private readonly MethodInfo _createLoggerMethod = typeof(LoggingExtension).GetTypeInfo()
                                                                                   .GetDeclaredMethod(nameof(CreateLogger));
 
