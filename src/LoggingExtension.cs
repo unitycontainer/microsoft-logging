@@ -2,6 +2,7 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using System.Security;
 using Unity.Attributes;
 using Unity.Builder;
 using Unity.Extension;
@@ -25,13 +26,13 @@ namespace Unity.Microsoft.Logging
 
         [InjectionConstructor]
         public LoggingExtension()
-            : this(new LoggerFactory())
         {
+            LoggerFactory = new LoggerFactory();
         }
 
-        public LoggingExtension(ILoggerFactory loggerFactory)
+        public LoggingExtension(ILoggerFactory factory)
         {
-            LoggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
+            LoggerFactory = factory ?? new LoggerFactory();
         }
 
 
@@ -40,7 +41,7 @@ namespace Unity.Microsoft.Logging
 
         #region Public Members
 
-        public ILoggerFactory LoggerFactory { get; } = new LoggerFactory();
+        public ILoggerFactory LoggerFactory { get; }
 
         #endregion
 
@@ -87,7 +88,7 @@ namespace Unity.Microsoft.Logging
 
         protected override void Initialize()
         {
-            Context.Policies.Set(typeof(ILogger), null, typeof(IBuildPlanPolicy), this);
+            Context.Policies.Set(typeof(ILogger), string.Empty, typeof(IBuildPlanPolicy), this);
             Context.Policies.Set<IBuildPlanCreatorPolicy>(this, typeof(ILogger));
             Context.Policies.Set<IBuildPlanCreatorPolicy>(this, typeof(ILogger<>));
         }
@@ -103,7 +104,7 @@ namespace Unity.Microsoft.Logging
             /// 
             /// </summary>
             /// <param name="buildMethod"></param>
-            public DynamicMethodBuildPlan(DynamicBuildPlanMethod buildMethod, 
+            public DynamicMethodBuildPlan(DynamicBuildPlanMethod buildMethod,
                                           ILoggerFactory loggerFactory)
             {
                 _buildMethod = buildMethod;

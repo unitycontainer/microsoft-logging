@@ -1,5 +1,5 @@
 ﻿using System;
 using System.Security;
 
-[assembly:CLSCompliant(true)]
+//[assembly:CLSCompliant(true)]
 [assembly:SecurityTransparent]
