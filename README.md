@@ -33,6 +33,6 @@ container.RegisterType<IService, Service>();
 var service = container.Resolve<IService>();
 ```
 
-- Log normally...
+For more information see [this example](https://github.com/unitycontainer/examples/tree/master/src/Logging/Microsoft.Logging)
 
 
