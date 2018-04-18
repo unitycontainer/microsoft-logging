@@ -14,24 +14,25 @@ Unity extension to integrate with [Microsoft.Extensions.Logging](https://www.nug
 Install-Package Unity.Microsoft.Logging 
 ```
 
-## Registration:
-- Add `LoggingExtension` extension to the container
-
+### Create and configure LoggerFactory
 ```C#
-container = new UnityContainer();
-container.AddNewExtension<LoggingExtension>()
+ILoggerFactory loggerFactory = new LoggerFactory();
+loggerFactory.AddProvider(new ConsoleLoggerProvider((text, logLevel) => logLevel >= LogLevel.Debug, false));
 ```
-- Where required add `ILogger` or  `ILogger<T>` interface to resolved constructor. 
-
+### Get the container
 ```C#
-public class LoggedType
-{
-    public LoggedType(ILogger<LoggedType> log)
-    {
-    }
-  ...
-}
+var container = new UnityContainer();
 ```
+### Register extension and pass it configured factory
+```C#
+container.AddExtension(new LoggingExtension(loggerFactory));
+
+// Register few types
+container.RegisterType<IService, Service>();
+
+var service = container.Resolve<IService>();
+```
+
 - Log normally...
 
 
