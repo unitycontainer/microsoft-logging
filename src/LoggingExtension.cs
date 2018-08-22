@@ -2,7 +2,6 @@
 using System;
 using System.Linq;
 using System.Reflection;
-using System.Security;
 using Unity.Attributes;
 using Unity.Builder;
 using Unity.Extension;
@@ -104,6 +103,7 @@ namespace Unity.Microsoft.Logging
             /// 
             /// </summary>
             /// <param name="buildMethod"></param>
+            /// <param name="loggerFactory"></param>
             public DynamicMethodBuildPlan(DynamicBuildPlanMethod buildMethod,
                                           ILoggerFactory loggerFactory)
             {
