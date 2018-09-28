@@ -87,10 +87,11 @@ namespace Unity.Microsoft.Logging
 
         protected override void Initialize()
         {
-            Context.Policies.Set(typeof(ILogger), string.Empty, typeof(IBuildPlanPolicy), this);
-            Context.Policies.Set<IBuildPlanCreatorPolicy>(this, typeof(ILogger));
-            Context.Policies.Set<IBuildPlanCreatorPolicy>(this, typeof(ILogger<>));
+            Context.Policies.Set(typeof(ILogger),   string.Empty, typeof(IBuildPlanPolicy),        this);
+            Context.Policies.Set(typeof(ILogger),   string.Empty, typeof(IBuildPlanCreatorPolicy), this);
+            Context.Policies.Set(typeof(ILogger<>), string.Empty, typeof(IBuildPlanCreatorPolicy), this);
         }
+
 
         private delegate void DynamicBuildPlanMethod(IBuilderContext context, ILoggerFactory loggerFactory);
 
