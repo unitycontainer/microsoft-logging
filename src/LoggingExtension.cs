@@ -1,10 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Reflection;
-using Unity.Build;
 using Unity.Builder;
 using Unity.Extension;
 using Unity.ObjectBuilder.BuildPlan.DynamicMethod;
 using Unity.Policy;
+using Unity.Resolution;
 
 namespace Unity.Microsoft.Logging
 {
@@ -81,7 +81,7 @@ namespace Unity.Microsoft.Logging
             var buildMethod = (GenericLoggerFactory)CreateLoggerMethod.MakeGenericMethod(itemType)
                                                                       .CreateDelegate(typeof(GenericLoggerFactory));
 
-            return new DynamicMethodBuildPlan((BuildDelegate<TBuilderContext>)((ref TBuilderContext c) =>
+            return new DynamicMethodBuildPlan((ResolveDelegate<TBuilderContext>)((ref TBuilderContext c) =>
             {
                 c.Existing = buildMethod(LoggerFactory);
                 return c.Existing;
