@@ -4,7 +4,6 @@ using Unity.Builder;
 using Unity.Extension;
 using Unity.ObjectBuilder.BuildPlan.DynamicMethod;
 using Unity.Policy;
-using Unity.Resolution;
 
 namespace Unity.Microsoft.Logging
 {
@@ -61,8 +60,7 @@ namespace Unity.Microsoft.Logging
         #region IBuildPlanPolicy
 
 
-        public void BuildUp<TBuilderContext>(ref TBuilderContext context)
-            where TBuilderContext : IBuilderContext
+        public void BuildUp(ref BuilderContext context)
         {
             context.Existing = null == context.ParentContext
                              ? LoggerFactory.CreateLogger(context.OriginalBuildKey.Name ?? string.Empty)
@@ -75,13 +73,13 @@ namespace Unity.Microsoft.Logging
 
         #region IBuildPlanCreatorPolicy
 
-        IBuildPlanPolicy IBuildPlanCreatorPolicy.CreatePlan<TBuilderContext>(ref TBuilderContext context, INamedType buildKey)
+        IBuildPlanPolicy IBuildPlanCreatorPolicy.CreatePlan(ref BuilderContext context, INamedType buildKey)
         {
             var itemType = context.Type.GetTypeInfo().GenericTypeArguments[0];
             var buildMethod = (GenericLoggerFactory)CreateLoggerMethod.MakeGenericMethod(itemType)
                                                                       .CreateDelegate(typeof(GenericLoggerFactory));
 
-            return new DynamicMethodBuildPlan((ResolveDelegate<TBuilderContext>)((ref TBuilderContext c) =>
+            return new DynamicMethodBuildPlan((ResolveDelegate<BuilderContext>)((ref BuilderContext c) =>
             {
                 c.Existing = buildMethod(LoggerFactory);
                 return c.Existing;
