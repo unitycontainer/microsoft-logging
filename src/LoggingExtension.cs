@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System;
+using Microsoft.Extensions.Logging;
 using System.Reflection;
 using Unity.Builder;
 using Unity.Extension;
@@ -73,7 +74,7 @@ namespace Unity.Microsoft.Logging
 
         #region IBuildPlanCreatorPolicy
 
-        IBuildPlanPolicy IBuildPlanCreatorPolicy.CreatePlan(ref BuilderContext context, INamedType buildKey)
+        IBuildPlanPolicy IBuildPlanCreatorPolicy.CreatePlan(ref BuilderContext context, Type type, string name)
         {
             var itemType = context.Type.GetTypeInfo().GenericTypeArguments[0];
             var buildMethod = (GenericLoggerFactory)CreateLoggerMethod.MakeGenericMethod(itemType)
