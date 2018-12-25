@@ -3,13 +3,11 @@ using Microsoft.Extensions.Logging;
 using System.Reflection;
 using Unity.Builder;
 using Unity.Extension;
-using Unity.ObjectBuilder.BuildPlan.DynamicMethod;
 using Unity.Policy;
 
 namespace Unity.Microsoft.Logging
 {
     public class LoggingExtension : UnityContainerExtension,
-                                    IBuildPlanCreatorPolicy,
                                     IBuildPlanPolicy
     {
         #region Fields
@@ -50,9 +48,9 @@ namespace Unity.Microsoft.Logging
 
         protected override void Initialize()
         {
-            Context.Policies.Set(typeof(ILogger), string.Empty, typeof(IBuildPlanPolicy), this);
-            Context.Policies.Set(typeof(ILogger), string.Empty, typeof(IBuildPlanCreatorPolicy), this);
-            Context.Policies.Set(typeof(ILogger<>), string.Empty, typeof(IBuildPlanCreatorPolicy), this);
+            Context.Policies.Set(typeof(ILogger),   string.Empty, typeof(IBuildPlanPolicy), this);
+            Context.Policies.Set(typeof(ILogger),   string.Empty, typeof(ResolveDelegateFactory), (ResolveDelegateFactory)GetResolver);
+            Context.Policies.Set(typeof(ILogger<>), string.Empty, typeof(ResolveDelegateFactory), (ResolveDelegateFactory)GetResolver);
         }
 
         #endregion
@@ -72,19 +70,19 @@ namespace Unity.Microsoft.Logging
         #endregion
 
 
-        #region IBuildPlanCreatorPolicy
+        #region IResolveDelegateFactory
 
-        IBuildPlanPolicy IBuildPlanCreatorPolicy.CreatePlan(ref BuilderContext context, Type type, string name)
+
+        public ResolveDelegate<BuilderContext> GetResolver(ref BuilderContext context)
         {
             var itemType = context.Type.GetTypeInfo().GenericTypeArguments[0];
             var buildMethod = (GenericLoggerFactory)CreateLoggerMethod.MakeGenericMethod(itemType)
                                                                       .CreateDelegate(typeof(GenericLoggerFactory));
-
-            return new DynamicMethodBuildPlan((ResolveDelegate<BuilderContext>)((ref BuilderContext c) =>
+            return ((ref BuilderContext c) =>
             {
                 c.Existing = buildMethod(LoggerFactory);
                 return c.Existing;
-            }));
+            });
         }
 
         #endregion
