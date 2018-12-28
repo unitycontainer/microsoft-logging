@@ -62,7 +62,7 @@ namespace Unity.Microsoft.Logging
         public void BuildUp(ref BuilderContext context)
         {
             context.Existing = null == context.DeclaringType
-                             ? LoggerFactory.CreateLogger(context.RegistrationName ?? string.Empty)
+                             ? LoggerFactory.CreateLogger(context.Name ?? string.Empty)
                              : LoggerFactory.CreateLogger(context.DeclaringType);
             context.BuildComplete = true;
         }
