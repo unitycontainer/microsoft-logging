@@ -7,8 +7,7 @@ using Unity.Policy;
 
 namespace Unity.Microsoft.Logging
 {
-    public class LoggingExtension : UnityContainerExtension,
-                                    IBuildPlanPolicy
+    public class LoggingExtension : UnityContainerExtension
     {
         #region Fields
 
@@ -48,9 +47,8 @@ namespace Unity.Microsoft.Logging
 
         protected override void Initialize()
         {
-            Context.Policies.Set(typeof(ILogger),   string.Empty, typeof(IBuildPlanPolicy), this);
             Context.Policies.Set(typeof(ILogger),   string.Empty, typeof(ResolveDelegateFactory), (ResolveDelegateFactory)GetResolver);
-            Context.Policies.Set(typeof(ILogger<>), string.Empty, typeof(ResolveDelegateFactory), (ResolveDelegateFactory)GetResolver);
+            Context.Policies.Set(typeof(ILogger<>), string.Empty, typeof(ResolveDelegateFactory), (ResolveDelegateFactory)GetResolverGeneric);
         }
 
         #endregion
@@ -72,8 +70,17 @@ namespace Unity.Microsoft.Logging
 
         #region IResolveDelegateFactory
 
-
         public ResolveDelegate<BuilderContext> GetResolver(ref BuilderContext context)
+        {
+            return ((ref BuilderContext c) =>
+            {
+                return null == c.DeclaringType
+                ? LoggerFactory.CreateLogger(c.Name ?? string.Empty)
+                : LoggerFactory.CreateLogger(c.DeclaringType);
+            });
+        }
+
+        public ResolveDelegate<BuilderContext> GetResolverGeneric(ref BuilderContext context)
         {
             var itemType = context.Type.GetTypeInfo().GenericTypeArguments[0];
             var buildMethod = (GenericLoggerFactory)CreateLoggerMethod.MakeGenericMethod(itemType)

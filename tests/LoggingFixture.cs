@@ -21,7 +21,7 @@ namespace Microsoft.Logging.Tests
         public void TestSetup()
         {
             _container = new UnityContainer();
-            _container.AddNewExtension<LoggingExtension>();
+            _container.AddExtension(new LoggingExtension());
         }
 
         [TestMethod]
