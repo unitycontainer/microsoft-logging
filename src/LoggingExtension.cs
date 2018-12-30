@@ -1,12 +1,15 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using Unity.Builder;
 using Unity.Extension;
 using Unity.Policy;
+using System.Security;
 
 namespace Unity.Microsoft.Logging
 {
+    [SecuritySafeCritical]
     public class LoggingExtension : UnityContainerExtension
     {
         #region Fields
@@ -54,29 +57,26 @@ namespace Unity.Microsoft.Logging
         #endregion
 
 
-        #region IBuildPlanPolicy
-
-
-        public void BuildUp(ref BuilderContext context)
-        {
-            context.Existing = null == context.DeclaringType
-                             ? LoggerFactory.CreateLogger(context.Name ?? string.Empty)
-                             : LoggerFactory.CreateLogger(context.DeclaringType);
-            context.BuildComplete = true;
-        }
-
-        #endregion
-
-
         #region IResolveDelegateFactory
 
         public ResolveDelegate<BuilderContext> GetResolver(ref BuilderContext context)
         {
             return ((ref BuilderContext c) =>
             {
-                return null == c.DeclaringType
+                Type declaringType = null;
+
+                if (IntPtr.Zero != c.Parent)
+                {
+                    unsafe
+                    {
+                        var parenContext = Unsafe.AsRef<BuilderContext>(c.Parent.ToPointer());
+                        declaringType = parenContext.RegistrationType;
+                    }
+                }
+
+                return null == declaringType
                 ? LoggerFactory.CreateLogger(c.Name ?? string.Empty)
-                : LoggerFactory.CreateLogger(c.DeclaringType);
+                : LoggerFactory.CreateLogger(declaringType);
             });
         }
 
