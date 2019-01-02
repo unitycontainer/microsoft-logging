@@ -50,8 +50,8 @@ namespace Unity.Microsoft.Logging
 
         protected override void Initialize()
         {
-            Context.Policies.Set(typeof(ILogger),   string.Empty, typeof(ResolveDelegateFactory), (ResolveDelegateFactory)GetResolver);
-            Context.Policies.Set(typeof(ILogger<>), string.Empty, typeof(ResolveDelegateFactory), (ResolveDelegateFactory)GetResolverGeneric);
+            Context.Policies.Set(typeof(ILogger),   UnityContainer.All, typeof(ResolveDelegateFactory), (ResolveDelegateFactory)GetResolver);
+            Context.Policies.Set(typeof(ILogger<>), UnityContainer.All, typeof(ResolveDelegateFactory), (ResolveDelegateFactory)GetResolverGeneric);
         }
 
         #endregion
@@ -75,7 +75,7 @@ namespace Unity.Microsoft.Logging
                 }
 
                 return null == declaringType
-                ? LoggerFactory.CreateLogger(c.Name ?? string.Empty)
+                ? LoggerFactory.CreateLogger(c.Name ?? UnityContainer.All)
                 : LoggerFactory.CreateLogger(declaringType);
             });
         }
