@@ -6,6 +6,7 @@ using Unity.Builder;
 using Unity.Extension;
 using Unity.Policy;
 using System.Security;
+using Unity.Resolution;
 
 namespace Unity.Microsoft.Logging
 {
