@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.27004.2005
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Unity.Microsoft.Logging", "src\Unity.Microsoft.Logging.csproj", "{74B8AD0A-E2DD-42CB-8391-A86586F77529}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Logging.Tests", "tests\Microsoft.Logging.Tests.csproj", "{9C31FECA-443B-4953-886A-F7DE3597A040}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Logging.Tests", "tests\Unity.Microsoft.Logging.Tests.csproj", "{9C31FECA-443B-4953-886A-F7DE3597A040}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
