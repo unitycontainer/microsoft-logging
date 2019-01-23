@@ -21,6 +21,7 @@
     <DelaySign>false</DelaySign>
     <RootNamespace>Unity.Microsoft.Logging</RootNamespace>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
@@ -38,10 +39,6 @@
     <UnityContainer>..\..\Container\src\Unity.Container.csproj</UnityContainer>
   </PropertyGroup>
 
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
 
   <ItemGroup Condition="Exists('$(UnityContainer)')">
     <ProjectReference Include="$(UnityContainer)" />
