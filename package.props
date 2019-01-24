@@ -1,7 +1,7 @@
 <Project>
 
   <PropertyGroup>
-    <Version>5.9.0</Version>
+    <Version>5.9.1</Version>
     <PackageReleaseNotes>This package is an Unity adapter to Microsoft.Extensions.Logging.2+</PackageReleaseNotes>
   </PropertyGroup>
 

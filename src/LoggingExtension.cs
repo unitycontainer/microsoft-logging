@@ -1,11 +1,10 @@
-﻿using System;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Reflection;
-using System.Runtime.CompilerServices;
+using System.Security;
 using Unity.Builder;
 using Unity.Extension;
 using Unity.Policy;
-using System.Security;
 using Unity.Resolution;
 
 namespace Unity.Microsoft.Logging
@@ -64,16 +63,7 @@ namespace Unity.Microsoft.Logging
         {
             return ((ref BuilderContext c) =>
             {
-                Type declaringType = null;
-
-                if (IntPtr.Zero != c.Parent)
-                {
-                    unsafe
-                    {
-                        var parenContext = Unsafe.AsRef<BuilderContext>(c.Parent.ToPointer());
-                        declaringType = parenContext.RegistrationType;
-                    }
-                }
+                Type declaringType = c.DeclaringType;
 
                 return null == declaringType
                 ? LoggerFactory.CreateLogger(c.Name ?? UnityContainer.All)
