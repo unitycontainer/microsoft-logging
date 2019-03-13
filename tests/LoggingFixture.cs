@@ -34,6 +34,12 @@ namespace Microsoft.Logging.Tests
         }
 
         [TestMethod]
+        public void microsoft_logging_factory_resolve_LoggerFactory()
+        {
+            Assert.IsNotNull(_container.Resolve<ILoggerFactory>());
+        }
+
+        [TestMethod]
         public void microsoft_logging_factory_CreateLogger_Category()
         {
             var factory = _container.Configure<LoggingExtension>().LoggerFactory;
