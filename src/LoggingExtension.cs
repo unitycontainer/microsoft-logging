@@ -26,9 +26,8 @@ namespace Unity.Microsoft.Logging
 
         [InjectionConstructor]
         public LoggingExtension()
-        {
-            LoggerFactory = new LoggerFactory();
-        }
+            : this(new LoggerFactory())
+        { }
 
         public LoggingExtension(ILoggerFactory factory)
         {
@@ -50,8 +49,10 @@ namespace Unity.Microsoft.Logging
 
         protected override void Initialize()
         {
-            Context.Policies.Set(typeof(ILogger),   UnityContainer.All, typeof(ResolveDelegateFactory), (ResolveDelegateFactory)GetResolver);
+            Context.Policies.Set(typeof(ILogger), UnityContainer.All, typeof(ResolveDelegateFactory), (ResolveDelegateFactory)GetResolver);
             Context.Policies.Set(typeof(ILogger<>), UnityContainer.All, typeof(ResolveDelegateFactory), (ResolveDelegateFactory)GetResolverGeneric);
+
+            Container.RegisterFactory(typeof(ILoggerFactory), UnityContainer.All, (c, t, n) => LoggerFactory, FactoryLifetime.Singleton);
         }
 
         #endregion
