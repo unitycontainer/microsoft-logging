@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using System;
 using System.Reflection;
 using System.Security;
@@ -25,13 +26,9 @@ namespace Unity.Microsoft.Logging
         #region Constructors
 
         [InjectionConstructor]
-        public LoggingExtension()
-            : this(new LoggerFactory())
-        { }
-
         public LoggingExtension(ILoggerFactory factory)
         {
-            LoggerFactory = factory ?? new LoggerFactory();
+            LoggerFactory = factory ?? throw new ArgumentNullException(nameof(factory));
         }
 
 

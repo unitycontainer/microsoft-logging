@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using Unity;
@@ -21,7 +22,7 @@ namespace Microsoft.Logging.Tests
         public void TestSetup()
         {
             _container = new UnityContainer();
-            _container.AddExtension(new LoggingExtension());
+            _container.AddExtension(new LoggingExtension(NullLoggerFactory.Instance));
         }
 
         [TestMethod]
